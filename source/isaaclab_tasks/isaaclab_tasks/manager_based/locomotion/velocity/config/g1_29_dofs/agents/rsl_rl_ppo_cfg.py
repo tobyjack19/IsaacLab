@@ -59,8 +59,8 @@ class G1_29_DOFs_FlatPPORunnerCfg(G1_29_DOFs_RoughPPORunnerCfg):
 
 @configclass
 class G1_29_DOFs_VelocityDistillationRunnerCfg(G1_29_DOFs_FlatPPORunnerCfg):
+    class_name = "DistillationRunner"
     seed = 42
-    num_steps_per_env = 24
     max_iterations = 10000
     save_interval = 100
     run_name = "distillation"
