@@ -16,7 +16,7 @@ from isaaclab_tasks.manager_based.locomotion.velocity.velocity_env_cfg import (
 )
 
 from .rough_env_cfg import G1_29_DOFs_RoughEnvCfg
-
+from ipdb import set_trace 
 
 @configclass
 class G1_29_DOFs_FlatEnvCfg(G1_29_DOFs_RoughEnvCfg):
