@@ -97,12 +97,12 @@ class G1_29_DOFs_FlatStudentPPORunnerCfg(G1_29_DOFs_FlatPPORunnerCfg):
     policy = RslRlPpoActorCriticRecurrentCfg(
         class_name="ActorCriticRecurrent",
         init_noise_std=0.1,
-        actor_hidden_dims=[512, 256, 128],
-        critic_hidden_dims=[512, 256, 128],
+        actor_hidden_dims=[256, 256, 128],
+        critic_hidden_dims=[256, 256, 128],
         activation="elu",
         rnn_type="lstm",
         rnn_hidden_dim=256,
-        rnn_num_layers=2,
+        rnn_num_layers=3,
     )
 
     def __post_init__(self):
