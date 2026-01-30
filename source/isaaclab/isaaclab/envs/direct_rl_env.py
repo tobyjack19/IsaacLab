@@ -270,6 +270,9 @@ class DirectRLEnv(gym.Env):
     Operations.
     """
 
+    def overhaul_robot_prims(self):
+        print("[DirectRLEnv] Overhauling robot prims...")
+
     def reset(self, seed: int | None = None, options: dict[str, Any] | None = None) -> tuple[VecEnvObs, dict]:
         """Resets all the environments and returns observations.
 

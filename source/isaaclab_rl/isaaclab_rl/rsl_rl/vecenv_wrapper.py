@@ -140,6 +140,10 @@ class RslRlVecEnvWrapper(VecEnv):
         # reset the environment
         obs_dict, extras = self.env.reset()
         return TensorDict(obs_dict, batch_size=[self.num_envs]), extras
+    
+    def overhaul_robot_prims(self):
+        print("[RslRlVecEnvWrapper] Overhauling robot prims...")
+        self.env.overhaul_robot_prims()
 
     def get_observations(self) -> TensorDict:
         """Returns the current observations of the environment."""
