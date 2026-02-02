@@ -293,3 +293,5 @@ class RslRlOnPolicyCoDesignRunnerCfg(RslRlBaseRunnerCfg):
 
     algorithm: RslRlPpoAlgorithmCfg = MISSING
     """The algorithm configuration."""
+
+    hardware_iteration: int = 0
