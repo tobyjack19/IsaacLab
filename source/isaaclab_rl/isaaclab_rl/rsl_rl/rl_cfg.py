@@ -99,14 +99,48 @@ class RslRlActorCriticCNNCfg(RslRlPpoActorCriticCfg):
         flatten: bool = True
         """Whether to flatten the output of the CNN."""
 
+    @configclass
+    class CNN3DCfg:
+        """Configuration for a 3D CNN encoder (temporal frame stacks)."""
+
+        output_channels: tuple[int] | list[int] = MISSING
+        """The number of output channels for each convolutional layer."""
+
+        kernel_size: int | tuple | list = MISSING
+        """Kernel size per layer. An int is broadcast to (D,H,W); a 3-tuple gives per-axis control."""
+
+        stride: int | tuple | list = 1
+        """Stride per layer."""
+
+        dilation: int | tuple | list = 1
+        """Dilation per layer."""
+
+        padding: Literal["none", "zeros", "reflect", "replicate", "circular"] = "none"
+        """Padding type."""
+
+        norm: Literal["none", "batch", "layer"] | tuple[str] | list[str] = "none"
+        """Normalization type per layer."""
+
+        activation: str = MISSING
+        """Activation function."""
+
+        max_pool: bool | tuple[bool] | list[bool] = False
+        """Whether to use max pooling per layer."""
+
+        global_pool: Literal["none", "max", "avg"] = "none"
+        """Global pooling type."""
+
+        flatten: bool = True
+        """Whether to flatten the output."""
+
     class_name: str = "ActorCriticCNN"
     """The policy class name. Default is ActorCriticCNN."""
 
-    actor_cnn_cfg: list[CNNCfg] | CNNCfg | None = MISSING
-    """The CNN configuration for the actor network."""
+    actor_cnn_cfg: list[CNNCfg] | CNNCfg | CNN3DCfg | None = MISSING
+    """The CNN configuration for the actor network. Use CNNCfg for 2D or CNN3DCfg for 3D."""
 
-    critic_cnn_cfg: list[CNNCfg] | CNNCfg | None = MISSING
-    """The CNN configuration for the critic network."""
+    critic_cnn_cfg: list[CNNCfg] | CNNCfg | CNN3DCfg | None = MISSING
+    """The CNN configuration for the critic network. Use CNNCfg for 2D or CNN3DCfg for 3D."""
 
 ############################
 # Algorithm configurations #
