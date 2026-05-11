@@ -133,14 +133,64 @@ class RslRlActorCriticCNNCfg(RslRlPpoActorCriticCfg):
         flatten: bool = True
         """Whether to flatten the output."""
 
+    @configclass
+    class CNNTSMCfg:
+        """Configuration for a 2D CNN with online Temporal Shift Module (TSM).
+
+        The environment provides **one frame per step** ``(B, C, H, W)``.  Temporal
+        context is maintained entirely inside the network via per-layer activation
+        caches — no raw frame buffer is needed in the environment
+        (``num_tactile_frames = 1``).
+
+        ``input_channels`` is inferred automatically from the observation shape.
+        ``frames_per_step`` must always be ``1``; it exists only so that config-dict
+        dispatch can distinguish CNNTSMCfg from CNN3DCfg (which stacks frames).
+        """
+
+        output_channels: tuple[int] | list[int] = MISSING
+        """Output channels per conv layer."""
+
+        kernel_size: int | tuple[int] | list[int] = MISSING
+        """Spatial kernel size(s)."""
+
+        frames_per_step: int = 1
+        """Must be 1. TSM carries temporal context via internal activation caches, not a raw frame stack."""
+
+        shift_fraction: float = 0.125
+        """Fraction of per-layer channels used as the temporal cache. Default 0.125 (1/8)."""
+
+        stride: int | tuple[int] | list[int] = 1
+        """Stride per conv layer."""
+
+        dilation: int | tuple[int] | list[int] = 1
+        """Dilation per conv layer."""
+
+        padding: Literal["none", "zeros", "reflect", "replicate", "circular"] = "none"
+        """Padding type."""
+
+        norm: Literal["none", "batch", "layer"] | tuple[str] | list[str] = "none"
+        """Normalization type per layer."""
+
+        activation: str = MISSING
+        """Activation function."""
+
+        max_pool: bool | tuple[bool] | list[bool] = False
+        """Whether to use max pooling per layer."""
+
+        global_pool: Literal["none", "max", "avg"] = "none"
+        """Global pooling type."""
+
+        flatten: bool = True
+        """Whether to flatten the output."""
+
     class_name: str = "ActorCriticCNN"
     """The policy class name. Default is ActorCriticCNN."""
 
-    actor_cnn_cfg: list[CNNCfg] | CNNCfg | CNN3DCfg | None = MISSING
-    """The CNN configuration for the actor network. Use CNNCfg for 2D or CNN3DCfg for 3D."""
+    actor_cnn_cfg: list[CNNCfg] | CNNCfg | CNN3DCfg | CNNTSMCfg | None = MISSING
+    """The CNN configuration for the actor network. Use CNNCfg for 2D, CNN3DCfg for 3D, or CNNTSMCfg for TSM."""
 
-    critic_cnn_cfg: list[CNNCfg] | CNNCfg | CNN3DCfg | None = MISSING
-    """The CNN configuration for the critic network. Use CNNCfg for 2D or CNN3DCfg for 3D."""
+    critic_cnn_cfg: list[CNNCfg] | CNNCfg | CNN3DCfg | CNNTSMCfg | None = MISSING
+    """The CNN configuration for the critic network. Use CNNCfg for 2D, CNN3DCfg for 3D, or CNNTSMCfg for TSM."""
 
 ############################
 # Algorithm configurations #
@@ -329,3 +379,12 @@ class RslRlOnPolicyCoDesignRunnerCfg(RslRlBaseRunnerCfg):
     """The algorithm configuration."""
 
     hardware_iteration: int = 0
+
+    codesign_assets_dir: str | None = None
+    """Absolute path to the task's Codesign_Assets directory.
+
+    If None (default), the runner derives the path automatically from ``experiment_name``
+    using the convention ``tasks/direct/{experiment_name}/codesign_toolkit/Codesign_Assets``
+    relative to the Tactile_Lab package root.  Set this explicitly only when the task
+    deviates from that convention.
+    """
