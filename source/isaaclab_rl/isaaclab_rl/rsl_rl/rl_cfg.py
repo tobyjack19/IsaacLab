@@ -46,6 +46,25 @@ class RslRlPpoActorCriticCfg:
     activation: str = MISSING
     """The activation function for the actor and critic networks."""
 
+@configclass
+class RslRlActorCriticExtrinsicsCfg(RslRlPpoActorCriticCfg):  # stage 1
+    """Configuration for PPO actor-critic with privileged extrinsics encoder (Stage 1)."""
+
+    class_name: str = "ActorCriticExtrinsics"
+    """Policy class name."""
+
+    # ---- Extrinsics encoder ----
+    extrinsics_output_dims: int = MISSING
+    """Dimension of the latent extrinsics vector."""
+
+    priv_obs_normalization: bool = MISSING
+    """Whether to normalize the privileged observation for the extrinsics encoder."""
+    
+    extrinsics_hidden_dims: tuple[int] | list[int] = (256, 256, 256)
+    """Hidden layer sizes for the extrinsics encoder MLP."""
+
+    last_activation: str | None = None
+    # """Whether to apply Tanh activation to the output of the extrinsics encoder."""
 
 @configclass
 class RslRlPpoActorCriticRecurrentCfg(RslRlPpoActorCriticCfg):
@@ -364,6 +383,30 @@ class RslRlOnPolicyRunnerCfg(RslRlBaseRunnerCfg):
 
     algorithm: RslRlPpoAlgorithmCfg = MISSING
     """The algorithm configuration."""
+
+@configclass
+class RslRlOnPolicyCoDesignRunnerCfg(RslRlBaseRunnerCfg):
+    """Configuration of the runner for on-policy algorithms."""
+
+    class_name: str = "OnPolicyCoDesignRunner"
+    """The runner class name. Default is OnPolicyCoDesignRunner."""
+
+    policy: RslRlPpoActorCriticCfg = MISSING
+    """The policy configuration."""
+
+    algorithm: RslRlPpoAlgorithmCfg = MISSING
+    """The algorithm configuration."""
+
+    hardware_iteration: int = 0
+
+    codesign_assets_dir: str | None = None
+    """Absolute path to the task's Codesign_Assets directory.
+
+    If None (default), the runner derives the path automatically from ``experiment_name``
+    using the convention ``tasks/direct/{experiment_name}/codesign_toolkit/Codesign_Assets``
+    relative to the Tactile_Lab package root.  Set this explicitly only when the task
+    deviates from that convention.
+    """
 
 @configclass
 class RslRlOnPolicyCoDesignRunnerCfg(RslRlBaseRunnerCfg):
